@@ -1,0 +1,10 @@
+FROM grafana/k6:latest
+
+ENV WORK_DIR=/home/k6
+
+WORKDIR ${WORK_DIR}
+
+ARG PROVIDED_BASE_URL=http://mockserver:8081
+ENV BASE_URL=$PROVIDED_BASE_URL
+
+COPY --chown=k6 . ${WORK_DIR}

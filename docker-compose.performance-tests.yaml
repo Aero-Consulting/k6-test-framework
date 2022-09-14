@@ -1,0 +1,47 @@
+version: '3.9'
+services:
+  performance:
+    container_name: performance
+    user: root
+    build:
+      dockerfile: ./Dockerfile-performance
+    volumes:
+      - ./logs/:/home/k6/logs
+      - ./reports/:/home/k6/reports
+    depends_on:
+      mockserver:
+        condition: service_healthy
+    command: run -q specs/case_1/example_test.js --log-output=file=./logs/k6.log --http-debug=full
+    networks:
+      - perf
+
+  mockserver:
+    container_name: mockserver
+    build:
+      dockerfile: ./Dockerfile-wiremock-performance
+    ports:
+      - 8081:8081
+    volumes:
+      - ./mocks/:/mocks
+    command: |
+      --proxy-all https://reqres.in
+      --global-response-templating
+      --verbose 
+      --port 8081
+      --root-dir /mocks
+      --container-threads 50
+      --no-request-journal
+      --async-response-enabled true
+      --async-response-threads 50
+      --jetty-acceptor-threads 4
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://mockserver:8081" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - perf
+
+networks:
+  perf:
+    name: perf

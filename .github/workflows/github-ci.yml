@@ -1,0 +1,41 @@
+name: Performance tests
+
+permissions:
+  pull-requests: write
+  issues: write
+  repository-projects: write
+  contents: write
+  pages: write
+
+on:
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    environment:
+      name: link
+      url: https://aero-consulting.github.io/k6-test-framework/${{ github.run_number }}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Run tests
+        run: docker compose -f docker-compose.performance-tests.yaml up --exit-code-from performance
+
+#      - name: Upload performance test results
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: k6-report
+#          path: logs
+
+      - name: Deploy report to Github Pages
+        if: always()
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: gh-pages
+          folder: reports

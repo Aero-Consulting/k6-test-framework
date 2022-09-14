@@ -1,0 +1,15 @@
+{
+  "name": "performance",
+  "version": "1.0.0",
+  "description": "Performance tests for Order service",
+  "main": "index.js",
+  "scripts": {
+    "test": "k6 run",
+    "bundle": "webpack"
+  },
+  "author": "Ilya Smotrov",
+  "license": "ISC",
+  "devDependencies": {
+    "k6": "0.0.0"
+  }
+}
