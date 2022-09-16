@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: link
-      url: https://aero-consulting.github.io/k6-test-framework/${{ github.run_number }}
+      url: https://aero-consulting.github.io/k6-test-framework
     steps:
 
       - name: Checkout
